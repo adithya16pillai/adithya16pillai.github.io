@@ -1,5 +1,5 @@
 // ============================================================
-// shared icon SVGs + tweaks panel + small helpers
+// shared icon SVGs + nav/section router
 // ============================================================
 
 // inline SVG icons (so they inherit currentColor)
@@ -12,7 +12,6 @@ const ICONS = {
   twitter: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg>`,
 };
 
-// social links data — used on all pages
 const SOCIALS = [
   { id: "linkedin", url: "https://www.linkedin.com/in/adithya-pillai16/", label: "linkedin" },
   { id: "github",   url: "https://github.com/", label: "github" },
@@ -30,110 +29,45 @@ function renderSocials(targetSel) {
   `).join("");
 }
 
-// nav data
 const NAV = [
-  { label: "experience",          href: "pages/experience.html",   key: "experience" },
-  { label: "education",           href: "pages/education.html",    key: "education" },
-  { label: "blogs & publications",href: "pages/blogs.html",        key: "blogs" },
-  { label: "projects",            href: "pages/projects.html",     key: "projects" },
-  { label: "other",               href: "pages/other.html",        key: "other" },
-  { label: "resume",              href: "pages/resume.html",       key: "resume" },
-  { label: "cv",                  href: "pages/cv.html",           key: "cv" },
+  { label: "home",                 href: "#home",        key: "home" },
+  { label: "experience",           href: "#experience",  key: "experience" },
+  { label: "education",            href: "#education",   key: "education" },
+  { label: "blogs & publications", href: "#blogs",       key: "blogs" },
+  { label: "projects",             href: "#projects",    key: "projects" },
+  { label: "other",                href: "#other",       key: "other" },
+  { label: "resume",               href: "#resume",      key: "resume" },
+  { label: "cv",                   href: "#cv",          key: "cv" },
 ];
 
-function renderNav(targetSel, opts = {}) {
-  const { prefix = "", current = null } = opts;
+function renderNav(targetSel) {
   const target = document.querySelector(targetSel);
   if (!target) return;
   target.innerHTML = NAV.map(item => `
     <li>
-      <a href="${prefix}${item.href}" class="${current === item.key ? "is-current" : ""}">${item.label}</a>
+      <a href="${item.href}" data-key="${item.key}">${item.label}</a>
     </li>
   `).join("");
 }
 
 // ============================================================
-// tweaks panel (typography swap)
+// section router — show one section at a time based on hash
 // ============================================================
-const TYPE_OPTIONS = [
-  { id: "serif", label: "editorial serif", subtitle: "newsreader + manrope" },
-  { id: "mono",  label: "mono + sans",      subtitle: "jetbrains mono + manrope" },
-  { id: "sans",  label: "humanist sans",    subtitle: "work sans" },
-];
+function initSectionRouter() {
+  const validKeys = new Set(NAV.map(n => n.key));
 
-function initTweaks() {
-  const stored = localStorage.getItem("typeChoice") || "serif";
-  document.body.setAttribute("data-type", stored);
-
-  // listen for host messages (edit mode)
-  let panelOpen = false;
-  const panel = document.getElementById("tweaks-panel");
-  if (!panel) return;
-
-  // render panel content
-  panel.innerHTML = `
-    <div class="tweaks-header">
-      <h3 class="tweaks-title">tweaks</h3>
-      <button class="tweaks-close" aria-label="close">×</button>
-    </div>
-    <div class="tweaks-group-label">typography</div>
-    <div class="tweaks-radio" id="type-radio">
-      ${TYPE_OPTIONS.map(opt => `
-        <label data-id="${opt.id}">
-          <input type="radio" name="type" value="${opt.id}" ${opt.id === stored ? "checked" : ""}/>
-          <span>
-            <div>${opt.label}</div>
-            <div style="font-size:0.72rem;opacity:0.6;margin-top:1px;">${opt.subtitle}</div>
-          </span>
-        </label>
-      `).join("")}
-    </div>
-  `;
-
-  // mark active
-  const syncActive = () => {
-    panel.querySelectorAll("[data-id]").forEach(el => {
-      el.classList.toggle("is-active", el.dataset.id === document.body.getAttribute("data-type"));
+  const showSection = (id) => {
+    const target = validKeys.has(id) ? id : "home";
+    document.querySelectorAll(".section").forEach(s => {
+      s.classList.toggle("is-active", s.id === target);
     });
-  };
-  syncActive();
-
-  panel.querySelectorAll("input[name='type']").forEach(inp => {
-    inp.addEventListener("change", e => {
-      const v = e.target.value;
-      document.body.setAttribute("data-type", v);
-      localStorage.setItem("typeChoice", v);
-      syncActive();
+    document.querySelectorAll(".nav-list a").forEach(a => {
+      a.classList.toggle("is-current", a.dataset.key === target);
     });
-  });
-
-  // open via floating button OR host edit mode
-  const openBtn = document.getElementById("tweaks-open-btn");
-  const open = () => { panel.classList.add("is-open"); panelOpen = true; if (openBtn) openBtn.style.display = "none"; };
-  const close = () => {
-    panel.classList.remove("is-open");
-    panelOpen = false;
-    if (openBtn) openBtn.style.display = "";
-    try { window.parent.postMessage({ type: "__edit_mode_dismissed" }, "*"); } catch (e) {}
+    window.scrollTo({ top: 0, behavior: "auto" });
   };
 
-  if (openBtn) openBtn.addEventListener("click", open);
-  panel.querySelector(".tweaks-close").addEventListener("click", close);
-
-  // host integration
-  window.addEventListener("message", (e) => {
-    const d = e.data;
-    if (!d || !d.type) return;
-    if (d.type === "__activate_edit_mode") open();
-    if (d.type === "__deactivate_edit_mode") close();
-  });
-  try { window.parent.postMessage({ type: "__edit_mode_available" }, "*"); } catch (e) {}
+  const fromHash = () => (location.hash || "#home").replace("#", "");
+  showSection(fromHash());
+  window.addEventListener("hashchange", () => showSection(fromHash()));
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  // apply stored type on every page that includes this file
-  const stored = localStorage.getItem("typeChoice") || "serif";
-  if (!document.body.getAttribute("data-type")) {
-    document.body.setAttribute("data-type", stored);
-  }
-});

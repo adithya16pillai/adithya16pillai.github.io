@@ -9,49 +9,70 @@
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
   <style>
-    /* ============================================================
-       landing — variation A (sketch-faithful)
-       ============================================================ */
-    body[data-screen-label] { } /* placeholder */
-
-    .stage {
-      position: relative;
-      min-height: 100vh;
-      padding: clamp(2rem, 5vw, 4rem) clamp(2rem, 6vw, 5.5rem);
-      overflow: hidden;
+    :root {
+      --nav-width: clamp(13rem, 20vw, 17rem);
     }
 
-    .layout {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-      gap: clamp(2rem, 6vw, 6rem);
-      min-height: calc(100vh - 8rem);
-      align-items: stretch;
-    }
-
-    /* left column */
-    .left-col {
+    /* ---------- fixed right nav ---------- */
+    .nav-col {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: var(--nav-width);
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      padding: 0 clamp(2rem, 4vw, 3.5rem) 0 1.5rem;
+      z-index: 10;
+    }
+    .nav-col .nav-list {
+      font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+      gap: 1.15rem;
+    }
+
+    /* ---------- scrolling left content ---------- */
+    .content-col {
+      position: relative;
+      z-index: 1;
+      padding: clamp(2rem, 5vw, 4rem) clamp(2rem, 6vw, 5.5rem);
+      padding-right: calc(var(--nav-width) + 2.5rem);
+    }
+
+    .section {
+      display: none;
+      max-width: 760px;
+    }
+    .section.is-active {
+      display: block;
+      animation: section-fade 0.35s ease;
+    }
+    @keyframes section-fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- home section (hero) ---------- */
+    .home-section {
+      flex-direction: column;
       justify-content: space-between;
-      padding-top: 1rem;
+      min-height: calc(100vh - 6rem);
+      max-width: 34rem;
       gap: 2rem;
+    }
+    .home-section.is-active {
+      display: flex;
     }
 
     .photo-wrap {
       position: relative;
-      width: clamp(240px, 32vw, 380px);
+      width: clamp(220px, 28vw, 340px);
       aspect-ratio: 1;
     }
-
     .photo-wrap .profile-circle {
       width: 100%;
       height: 100%;
     }
-
-    /* hand-drawn squiggle ring overlay */
     .photo-wrap svg.ring {
       position: absolute;
       inset: -18px;
@@ -60,189 +81,632 @@
       pointer-events: none;
     }
 
-    /* corner sticker dot */
-    .photo-wrap .sticker {
-      position: absolute;
-      top: -12px;
-      right: -8px;
-      width: 56px;
-      height: 56px;
-      transform: rotate(-12deg);
-      pointer-events: none;
-    }
+    .identity { max-width: 32rem; }
 
-    .identity {
-      max-width: 30rem;
+    /* ---------- intra-section helpers ---------- */
+    .section-subhead {
+      font-family: var(--font-display);
+      font-weight: var(--display-weight);
+      letter-spacing: var(--display-tracking);
+      font-size: 1.6rem;
+      margin: 3rem 0 1rem;
     }
+    .section-subhead:first-of-type { margin-top: 0; }
 
-    /* right column — nav */
-    .right-col {
+    .download-row {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-end;
-      padding-right: 0.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
     }
-
-    .right-col .nav-list {
-      font-size: clamp(1rem, 1.4vw, 1.15rem);
-      gap: 1.4rem;
-    }
-
-    /* decorative bits */
-    .corner-arrow {
-      position: absolute;
-      top: 2.5rem;
-      right: 3rem;
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: lowercase;
-      color: var(--brown);
-      opacity: 0.55;
-      display: flex;
+    .btn-primary {
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .corner-arrow .scribble-arrow {
-      width: 38px;
-      height: 8px;
-    }
-
-    .signature {
-      position: absolute;
-      bottom: 1.6rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      letter-spacing: 0.3em;
-      text-transform: lowercase;
-      color: var(--brown);
-      opacity: 0.5;
-    }
-
-    .signature .dot {
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-      margin: 0 0.6rem;
-      vertical-align: middle;
-    }
-
-    /* floating tweaks toggle */
-    .tweaks-open-btn {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
+      padding: 0.7rem 1.2rem;
       background: var(--brown);
       color: var(--bg);
-      border: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
+      border-radius: 999px;
+      font-size: 0.95rem;
       box-shadow: 3px 3px 0 var(--orange);
-      z-index: 50;
-      display: grid;
-      place-items: center;
       transition: transform 0.2s ease;
     }
-    .tweaks-open-btn:hover {
-      transform: translateY(-2px) rotate(8deg);
+    .btn-primary.btn-green-shadow { box-shadow: 3px 3px 0 var(--green); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.2rem;
+      background: transparent;
+      color: var(--brown);
+      border: 1.5px solid var(--brown);
+      border-radius: 999px;
+      font-size: 0.95rem;
     }
-    .tweaks-open-btn svg { width: 22px; height: 22px; }
 
-    /* responsive — stack on mobile */
+    .summary-card {
+      background: var(--cream);
+      padding: 2rem 2rem 1.5rem;
+      border-radius: 12px;
+      position: relative;
+      margin-bottom: 2.5rem;
+    }
+    .summary-card .tape {
+      position: absolute;
+      top: -12px;
+      left: 30px;
+      width: 80px;
+      height: 22px;
+      background: var(--orange);
+      opacity: 0.7;
+      transform: rotate(-2deg);
+      box-shadow: 0 2px 4px rgba(89,53,18,0.15);
+    }
+    .summary-card .label {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
+      opacity: 0.65;
+      margin-bottom: 0.5rem;
+    }
+    .summary-card p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0;
+      max-width: 60ch;
+    }
+
+    .inline-link {
+      text-decoration: underline wavy var(--green);
+      text-underline-offset: 4px;
+    }
+    .inline-link.orange { text-decoration-color: var(--orange); }
+
+    .section > .page-title { margin-top: 0; }
+
+    /* ---------- responsive ---------- */
     @media (max-width: 820px) {
-      .stage { padding: 2rem 1.5rem 4rem; }
-      .layout {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-        min-height: auto;
+      :root { --nav-width: 100%; }
+
+      .nav-col {
+        position: sticky;
+        top: 0;
+        height: auto;
+        width: 100%;
+        background: var(--bg);
+        border-bottom: 1px dashed var(--brown-15);
+        padding: 0.9rem 1.25rem;
+        z-index: 50;
+        justify-content: flex-start;
       }
-      .left-col { gap: 2.5rem; }
-      .photo-wrap {
-        width: clamp(200px, 60vw, 280px);
-      }
-      .right-col {
-        align-items: flex-start;
-      }
-      .right-col .nav-list {
+      .nav-col .nav-list {
+        flex-direction: row;
+        flex-wrap: wrap;
         text-align: left;
-        gap: 1.1rem;
+        gap: 0.6rem 1.2rem;
+        font-size: 0.9rem;
       }
-      .nav-list a::before {
-        display: none;
+      .nav-list a::after { display: none; }
+
+      .content-col {
+        padding: 1.75rem 1.25rem 4rem;
       }
-      .corner-arrow, .signature {
-        display: none;
+      .home-section {
+        min-height: auto;
+        gap: 1.6rem;
+      }
+      .photo-wrap {
+        width: clamp(180px, 50vw, 260px);
       }
     }
   </style>
 </head>
-<body class="paper-grain dot-grid">
+<body class="paper-grain dot-grid" data-type="mono">
 
-  <main class="stage">
-    <div class="layout">
+  <!-- FIXED RIGHT NAV -->
+  <aside class="nav-col">
+    <ul class="nav-list" id="nav-list"></ul>
+  </aside>
 
-      <!-- LEFT column -->
-      <section class="left-col">
+  <!-- LEFT CONTENT (sections shown one at a time) -->
+  <main class="content-col">
 
-        <div class="photo-wrap">
-          <div class="profile-circle" id="profile-circle">
-            <div class="profile-placeholder">a</div>
+    <!-- HOME -->
+    <section id="home" class="section home-section">
+      <div class="photo-wrap">
+        <div class="profile-circle">
+          <div class="profile-placeholder">a</div>
+        </div>
+        <svg class="ring" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M50 4 C 75 4, 96 25, 96 50 C 96 75, 75 96, 50 96 C 25 96, 4 75, 4 50 C 4 25, 25 4, 50 4 Z"
+                stroke="#593512" stroke-width="0.55" stroke-linecap="round"
+                stroke-dasharray="0.6 1.8" opacity="0.55"/>
+        </svg>
+      </div>
+      <div class="identity">
+        <h1 class="name">adithya rajesh<br/>pillai</h1>
+        <p class="bio">
+          researcher in cybersecurity, ai &amp; ml. experience with solutions
+          and product engineering from startups and mncs.
+        </p>
+        <div class="socials" id="socials"></div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <h1 class="page-title">experience</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">places i've worked, problems i've poked at, and what i learned breaking and building things along the way.</p>
+
+      <div class="entry">
+        <div class="entry-date">2024 — present</div>
+        <div>
+          <h3 class="entry-title">senior security researcher</h3>
+          <div class="entry-org">placeholder labs<span class="pill">full-time</span></div>
+          <div class="entry-body"><p>lead red-team research on llm-integrated systems. published findings on prompt-injection chains affecting agentic workflows. own the responsible-disclosure pipeline for partner orgs.</p>
+            <ul>
+              <li>shipped an internal fuzzing harness for tool-use agents, surfacing 14 high-severity issues in the first quarter</li>
+              <li>mentor two junior researchers; run a fortnightly internal reading group on ml security</li>
+              <li>speaker at three industry conferences in 2025</li>
+            </ul>
           </div>
-          <!-- wobbly hand-drawn ring -->
-          <svg class="ring" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M50 4
-                     C 75 4, 96 25, 96 50
-                     C 96 75, 75 96, 50 96
-                     C 25 96, 4 75, 4 50
-                     C 4 25, 25 4, 50 4 Z"
-                  stroke="#593512" stroke-width="0.55" stroke-linecap="round"
-                  stroke-dasharray="0.6 1.8"
-                  opacity="0.55"/>
-          </svg>
+          <div class="tag-row"><span class="tag tag-accent">ml security</span><span class="tag">prompt injection</span><span class="tag">red teaming</span><span class="tag">python</span><span class="tag">agentic systems</span></div>
         </div>
+      </div>
 
-        <div class="identity">
-          <h1 class="name">adithya rajesh<br/>pillai</h1>
-          <p class="bio">
-            researcher in cybersecurity, ai &amp; ml. experience with solutions
-            and product engineering from startups and mncs.
-          </p>
-          <div class="socials" id="socials"></div>
+      <div class="entry">
+        <div class="entry-date">2022 — 2024</div>
+        <div>
+          <h3 class="entry-title">security engineer ii</h3>
+          <div class="entry-org">placeholder corp<span class="pill">full-time</span></div>
+          <div class="entry-body"><p>worked across detection engineering and offensive r&amp;d. owned the cloud posture monitoring stack and shipped detection rules covering 60+ adversary techniques across mitre att&amp;ck.</p>
+            <ul>
+              <li>reduced mean-time-to-detect by 38% across the saas product line</li>
+              <li>built an internal training simulator used by ~200 engineers</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag tag-accent">detection engineering</span><span class="tag">aws</span><span class="tag">go</span><span class="tag">att&amp;ck</span></div>
         </div>
+      </div>
 
-      </section>
+      <div class="entry">
+        <div class="entry-date">2020 — 2022</div>
+        <div>
+          <h3 class="entry-title">product engineer</h3>
+          <div class="entry-org">placeholder startup<span class="pill">early-stage</span></div>
+          <div class="entry-body"><p>third engineer at a developer-tools startup. shipped the original auth + audit-logging stack and the first version of the customer-facing api. wore many hats — from data pipelines to on-call rotations.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">startup</span><span class="tag">node.js</span><span class="tag">postgres</span><span class="tag">auth</span></div>
+        </div>
+      </div>
 
-      <!-- RIGHT column -->
-      <aside class="right-col">
-        <ul class="nav-list" id="nav-list"></ul>
-      </aside>
+      <div class="entry">
+        <div class="entry-date">2019</div>
+        <div>
+          <h3 class="entry-title">research intern</h3>
+          <div class="entry-org">placeholder university lab<span class="pill">internship</span></div>
+          <div class="entry-body"><p>worked on adversarial robustness of image classifiers under a research advisor. contributed to a paper later cited in subsequent work on certified defenses.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">adversarial ml</span><span class="tag">pytorch</span><span class="tag">research</span></div>
+        </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- EDUCATION -->
+    <section id="education" class="section">
+      <h1 class="page-title">education</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">where i learned the foundations — and where i learned that the foundations are always shifting.</p>
+
+      <div class="entry">
+        <div class="entry-date">2018 — 2020</div>
+        <div>
+          <h3 class="entry-title">m.tech, computer science</h3>
+          <div class="entry-org">placeholder institute of technology<span class="pill">specialization: security</span></div>
+          <div class="entry-body"><p>thesis on hardware-assisted control-flow integrity. coursework in cryptography, advanced operating systems, applied machine learning, and program analysis.</p>
+            <ul>
+              <li>graduate teaching assistant for the systems security course</li>
+              <li>recipient of the merit-cum-means scholarship</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag tag-accent">cfi</span><span class="tag">program analysis</span><span class="tag">cryptography</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2014 — 2018</div>
+        <div>
+          <h3 class="entry-title">b.tech, computer science &amp; engineering</h3>
+          <div class="entry-org">placeholder college of engineering</div>
+          <div class="entry-body"><p>final-year project on anomaly detection in iot networks. president of the campus security &amp; ctf club; led a team that placed top-15 nationally.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">iot</span><span class="tag">anomaly detection</span><span class="tag">ctf</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">ongoing</div>
+        <div>
+          <h3 class="entry-title">self-directed</h3>
+          <div class="entry-org">the internet<span class="pill">always</span></div>
+          <div class="entry-body"><p>currently working through advanced courses in transformer interpretability and formal methods. perpetual reader of papers on ml safety, applied cryptography, and program synthesis.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">interpretability</span><span class="tag">formal methods</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOGS & PUBLICATIONS -->
+    <section id="blogs" class="section">
+      <h1 class="page-title">blogs &amp; publications</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">writing — sometimes peer-reviewed, sometimes a saturday-night essay. all linked here.</p>
+
+      <h2 class="section-subhead">peer-reviewed</h2>
+
+      <div class="entry">
+        <div class="entry-date">2025</div>
+        <div>
+          <h3 class="entry-title">agent-in-the-middle: lateral attacks against tool-using llm assistants</h3>
+          <div class="entry-org">venue placeholder · co-authors: a. example, b. example<span class="pill">paper</span></div>
+          <div class="entry-body"><p>we introduce a taxonomy of indirect prompt-injection vectors that exploit shared context between cooperating agents, and propose a lightweight provenance scheme that mitigates them with minimal performance cost.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">llm security</span><span class="tag">agentic</span><span class="tag">first author</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2023</div>
+        <div>
+          <h3 class="entry-title">static analysis at the speed of intent: an llm-augmented approach</h3>
+          <div class="entry-org">venue placeholder<span class="pill">paper</span></div>
+          <div class="entry-body"><p>a hybrid pipeline that uses lightweight language-model intent inference to guide a traditional static analyzer, reducing false-positive rates on a benchmark of open-source repos.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">static analysis</span><span class="tag">llm</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2021</div>
+        <div>
+          <h3 class="entry-title">fuzzing iot firmware via grammar-aware mutation</h3>
+          <div class="entry-org">venue placeholder<span class="pill">paper</span></div>
+          <div class="entry-body"><p>a domain-specific fuzzer that learns binary protocol grammars from observed traffic and uses them to drive structured mutations. discovered 7 previously unknown vulnerabilities.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">fuzzing</span><span class="tag">iot</span></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">essays &amp; blog posts</h2>
+
+      <div class="entry">
+        <div class="entry-date">2026</div>
+        <div>
+          <h3 class="entry-title">why we keep rediscovering the same agent attacks</h3>
+          <div class="entry-org">personal blog</div>
+          <div class="entry-body"><p>a wandering essay on why agent-security mistakes echo earlier rounds of web-security history — and what we can borrow.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">essay</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2025</div>
+        <div>
+          <h3 class="entry-title">a small note on threat models for retrieval pipelines</h3>
+          <div class="entry-org">personal blog</div>
+          <div class="entry-body"><p>short and pointed: the most common rag failure modes mapped to a simple stride-flavoured threat model.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">rag</span><span class="tag">threat modeling</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2024</div>
+        <div>
+          <h3 class="entry-title">i tried to find a memory bug with three different fuzzers</h3>
+          <div class="entry-org">personal blog</div>
+          <div class="entry-body"><p>field notes from running afl++, libfuzzer, and a hand-rolled grammar fuzzer on the same target. results are not what you'd expect.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">fuzzing</span><span class="tag">field notes</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <h1 class="page-title">projects</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">side things. weekend things. things that escaped a weekend and became a year.</p>
+
+      <div class="entry">
+        <div class="entry-date">2026</div>
+        <div>
+          <h3 class="entry-title">promptmine</h3>
+          <div class="entry-org">open-source · maintainer<span class="pill">active</span></div>
+          <div class="entry-body"><p>a static analyzer for prompt-injection vulnerabilities in agentic codebases. parses tool definitions, traces context flow, and flags missing provenance boundaries. ~1.3k stars on github.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">go</span><span class="tag">static analysis</span><span class="tag">llm</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2024 — present</div>
+        <div>
+          <h3 class="entry-title">tinyctf</h3>
+          <div class="entry-org">side project</div>
+          <div class="entry-body"><p>a self-hostable ctf platform built for university clubs. zero-config docker deploy, supports dynamic scoring and live scoreboards. used by ~12 university clubs i'm aware of.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">docker</span><span class="tag">django</span><span class="tag">education</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2023</div>
+        <div>
+          <h3 class="entry-title">the threat-model card deck</h3>
+          <div class="entry-org">physical · pdf<span class="pill">fun</span></div>
+          <div class="entry-body"><p>a printable card deck for running threat-modeling sessions. each card poses a concrete question ("who benefits from this data being wrong?"). distributed at meetups.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">printable</span><span class="tag">facilitation</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2022</div>
+        <div>
+          <h3 class="entry-title">cve-2022-xxxxx</h3>
+          <div class="entry-org">responsible disclosure<span class="pill">cve</span></div>
+          <div class="entry-body"><p>discovered and responsibly disclosed a memory-corruption issue in a widely-used open-source networking library. coordinated with maintainers; patch shipped within the embargo window.</p></div>
+          <div class="tag-row"><span class="tag tag-accent">disclosure</span><span class="tag">memory safety</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHER -->
+    <section id="other" class="section">
+      <h1 class="page-title">other</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">the stuff that doesn't fit anywhere else. talks, communities, the bits of life adjacent to work.</p>
+
+      <h2 class="section-subhead">talks</h2>
+
+      <div class="entry">
+        <div class="entry-date">2025</div>
+        <div>
+          <h3 class="entry-title">agents are just web apps with extra steps</h3>
+          <div class="entry-org">conference placeholder · keynote</div>
+          <div class="entry-body"><p>a 40-minute walkthrough of the structural overlaps between web-app security history and the emerging agentic stack. <a class="inline-link orange" href="#">slides</a> · <a class="inline-link orange" href="#">video</a></p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2024</div>
+        <div>
+          <h3 class="entry-title">where llm fuzzing actually works</h3>
+          <div class="entry-org">meetup placeholder</div>
+          <div class="entry-body"><p>shorter, sharper version of the workshop above. honest about what doesn't work too.</p></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">community &amp; service</h2>
+
+      <div class="entry">
+        <div class="entry-date">2023 — present</div>
+        <div>
+          <h3 class="entry-title">program committee</h3>
+          <div class="entry-org">workshop placeholder</div>
+          <div class="entry-body"><p>review papers on applied ml security. average 6 papers per cycle.</p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2022 — present</div>
+        <div>
+          <h3 class="entry-title">mentor</h3>
+          <div class="entry-org">diverse-in-security cohort</div>
+          <div class="entry-body"><p>monthly 1:1s with three early-career mentees from underrepresented backgrounds in security.</p></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">elsewhere</h2>
+
+      <div class="entry">
+        <div class="entry-date">ongoing</div>
+        <div>
+          <h3 class="entry-title">kitchen experiments</h3>
+          <div class="entry-org">personal</div>
+          <div class="entry-body"><p>currently obsessed with naturally-leavened breads and slow-fermented dosa batters. there are notebooks. they are messy.</p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">ongoing</div>
+        <div>
+          <h3 class="entry-title">long walks &amp; longer playlists</h3>
+          <div class="entry-org">personal</div>
+          <div class="entry-body"><p>the best ideas come on foot. happy to swap walking-route recommendations or a playlist.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESUME -->
+    <section id="resume" class="section">
+      <h1 class="page-title">resume</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">the short version. one page, recruiter-friendly, dated and current.</p>
+
+      <div class="download-row">
+        <a href="#" download class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          download pdf
+        </a>
+        <a href="#cv" class="btn-secondary">view full cv →</a>
+      </div>
+
+      <div class="summary-card">
+        <div class="tape"></div>
+        <div class="label">summary · the one-paragraph version</div>
+        <p>security researcher with ~6 years across offensive r&amp;d, detection engineering, and product. comfortable in the gap between papers and production systems. currently focused on the security of llm-integrated &amp; agentic software.</p>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">experience</div>
+        <div>
+          <h3 class="entry-title">see the full timeline</h3>
+          <div class="entry-org">experience section</div>
+          <div class="entry-body"><p><a class="inline-link" href="#experience">→ full work history with detail</a></p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">skills</div>
+        <div>
+          <h3 class="entry-title">what i reach for</h3>
+          <div class="entry-org">tools &amp; languages</div>
+          <div class="entry-body"><p>python · go · rust (learning) · pytorch · docker · kubernetes · aws · gcp · ghidra · ida · burp · semgrep · static &amp; dynamic analysis · fuzzing · threat modeling · ml red-teaming · technical writing</p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">selected</div>
+        <div>
+          <h3 class="entry-title">highlights</h3>
+          <div class="entry-org">across the timeline</div>
+          <div class="entry-body"><ul>
+            <li>3 peer-reviewed papers · 4 cves · 2 oss tools with active user bases</li>
+            <li>speaker at 5+ conferences and meetups across security and ml</li>
+            <li>built and shipped detection &amp; fuzzing pipelines used in production</li>
+          </ul></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CV -->
+    <section id="cv" class="section">
+      <h1 class="page-title">cv</h1>
+      <div class="page-title-underline"></div>
+      <p class="page-intro">the long version. academic-style — every publication, talk, and service entry, with dates.</p>
+
+      <div class="download-row">
+        <a href="#" download class="btn-primary btn-green-shadow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          download cv (pdf)
+        </a>
+      </div>
+
+      <h2 class="section-subhead">research focus</h2>
+      <p style="max-width:62ch;opacity:0.9;margin:0 0 2rem;">
+        security of ml-integrated and agentic systems · static &amp; dynamic program analysis for ml-augmented workflows · responsible disclosure and the social fabric around it.
+      </p>
+
+      <h2 class="section-subhead">publications</h2>
+
+      <div class="entry">
+        <div class="entry-date">2025</div>
+        <div>
+          <h3 class="entry-title">agent-in-the-middle: lateral attacks against tool-using llm assistants</h3>
+          <div class="entry-org">venue placeholder<span class="pill">first author</span></div>
+          <div class="entry-body"><p>placeholder co-authors. <a class="inline-link orange" href="#blogs">full abstract on the publications section</a>.</p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2023</div>
+        <div>
+          <h3 class="entry-title">static analysis at the speed of intent: an llm-augmented approach</h3>
+          <div class="entry-org">venue placeholder</div>
+          <div class="entry-body"><p>placeholder co-authors.</p></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2021</div>
+        <div>
+          <h3 class="entry-title">fuzzing iot firmware via grammar-aware mutation</h3>
+          <div class="entry-org">venue placeholder</div>
+          <div class="entry-body"><p>placeholder co-authors.</p></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">invited talks</h2>
+
+      <div class="entry">
+        <div class="entry-date">2025</div>
+        <div>
+          <h3 class="entry-title">agents are just web apps with extra steps</h3>
+          <div class="entry-org">conference placeholder · keynote</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2024</div>
+        <div>
+          <h3 class="entry-title">where llm fuzzing actually works</h3>
+          <div class="entry-org">meetup placeholder</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2024</div>
+        <div>
+          <h3 class="entry-title">responsible disclosure for ml systems</h3>
+          <div class="entry-org">panel placeholder</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">service</h2>
+
+      <div class="entry">
+        <div class="entry-date">2023 — present</div>
+        <div>
+          <h3 class="entry-title">program committee, workshop placeholder</h3>
+          <div class="entry-org">review track</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2022 — present</div>
+        <div>
+          <h3 class="entry-title">mentor, diverse-in-security cohort</h3>
+          <div class="entry-org">monthly 1:1s</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">awards &amp; recognitions</h2>
+
+      <div class="entry">
+        <div class="entry-date">2024</div>
+        <div>
+          <h3 class="entry-title">best paper runner-up</h3>
+          <div class="entry-org">venue placeholder</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2019</div>
+        <div>
+          <h3 class="entry-title">merit-cum-means scholarship</h3>
+          <div class="entry-org">institute placeholder</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-date">2017</div>
+        <div>
+          <h3 class="entry-title">national ctf finalist</h3>
+          <div class="entry-org">team placeholder</div>
+          <div class="entry-body"></div>
+        </div>
+      </div>
+
+      <h2 class="section-subhead">education</h2>
+      <p style="opacity:0.9;max-width:62ch;margin:0;">see the <a class="inline-link" href="#education">education section</a> for the formatted version.</p>
+    </section>
+
   </main>
-
-  <!-- tweaks panel -->
-  <button class="tweaks-open-btn" id="tweaks-open-btn" aria-label="open tweaks panel" title="tweaks">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  </button>
-  <div class="tweaks-panel" id="tweaks-panel"></div>
 
   <script src="site.js"></script>
   <script>
-    document.body.setAttribute("data-type", localStorage.getItem("typeChoice") || "serif");
     renderSocials("#socials");
-    renderNav("#nav-list", { prefix: "", current: null });
-    initTweaks();
+    renderNav("#nav-list");
+    initSectionRouter();
   </script>
 </body>
 </html>
