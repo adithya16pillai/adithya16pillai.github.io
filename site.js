@@ -29,6 +29,7 @@ function renderSocials(targetSel) {
   `).join("");
 }
 
+// Drop in your real PDFs at the repo root with these filenames to replace the placeholders.
 const NAV = [
   { label: "home",                 href: "#home",        key: "home" },
   { label: "experience",           href: "#experience",  key: "experience" },
@@ -36,25 +37,24 @@ const NAV = [
   { label: "blogs & publications", href: "#blogs",       key: "blogs" },
   { label: "projects",             href: "#projects",    key: "projects" },
   { label: "other",                href: "#other",       key: "other" },
-  { label: "resume",               href: "#resume",      key: "resume" },
-  { label: "cv",                   href: "#cv",          key: "cv" },
+  { label: "resume",               href: "resume.pdf",   key: "resume", external: true },
+  { label: "cv",                   href: "cv.pdf",       key: "cv",     external: true },
 ];
 
 function renderNav(targetSel) {
   const target = document.querySelector(targetSel);
   if (!target) return;
-  target.innerHTML = NAV.map(item => `
-    <li>
-      <a href="${item.href}" data-key="${item.key}">${item.label}</a>
-    </li>
-  `).join("");
+  target.innerHTML = NAV.map(item => {
+    const ext = item.external ? ` target="_blank" rel="noopener"` : "";
+    return `<li><a href="${item.href}" data-key="${item.key}"${ext}>${item.label}</a></li>`;
+  }).join("");
 }
 
 // ============================================================
 // section router — show one section at a time based on hash
 // ============================================================
 function initSectionRouter() {
-  const validKeys = new Set(NAV.map(n => n.key));
+  const validKeys = new Set(NAV.filter(n => !n.external).map(n => n.key));
 
   const showSection = (id) => {
     const target = validKeys.has(id) ? id : "home";
