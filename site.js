@@ -37,7 +37,6 @@ const NAV = [
   { label: "blogs & publications", href: "#blogs",       key: "blogs" },
   { label: "projects",             href: "#projects",    key: "projects" },
   { label: "other",                href: "#other",       key: "other" },
-  { label: "resume",               href: "resume.pdf",   key: "resume", external: true },
   { label: "cv",                   href: "cv.pdf",       key: "cv",     external: true },
 ];
 
