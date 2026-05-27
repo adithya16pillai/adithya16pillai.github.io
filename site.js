@@ -13,18 +13,19 @@ const ICONS = {
 };
 
 const SOCIALS = [
-  { id: "linkedin", url: "https://www.linkedin.com/in/adithya-pillai16/", label: "linkedin" },
-  { id: "github",   url: "https://github.com/", label: "github" },
-  { id: "devto",    url: "https://dev.to/", label: "dev.to" },
-  { id: "scholar",  url: "https://scholar.google.co.in/citations?user=WTX6An8AAAAJ&hl=en", label: "google scholar" },
+  { id: "linkedin", url: "https://www.linkedin.com/in/adithya-pillai16/", label: "LinkedIn" },
+  { id: "github",   url: "https://github.com/", label: "GitHub" },
+  { id: "devto",    url: "https://dev.to/", label: "DEV" },
+  { id: "scholar",  url: "https://scholar.google.co.in/citations?user=WTX6An8AAAAJ&hl=en", label: "Scholar" },
 ];
 
 function renderSocials(targetSel) {
   const target = document.querySelector(targetSel);
   if (!target) return;
   target.innerHTML = SOCIALS.map(s => `
-    <a class="social-link" href="${s.url}" target="_blank" rel="noopener" aria-label="${s.label}" title="${s.label}">
+    <a class="social-link" href="${s.url}" target="_blank" rel="noopener" aria-label="${s.label}">
       ${ICONS[s.id]}
+      <span class="social-label">${s.label}</span>
     </a>
   `).join("");
 }
