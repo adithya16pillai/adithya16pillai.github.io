@@ -84,7 +84,8 @@ a { color: inherit; text-decoration: none; }
   padding: 0;
   display: flex;
   flex-direction: row;
-  gap: 1.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
   align-items: center;
 }
 
@@ -135,14 +136,14 @@ a { color: inherit; text-decoration: none; }
    ============================================================ */
 
 .hero-photo-wrap {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(circle at 30% 30%, var(--tan), var(--orange) 70%);
   display: grid;
   place-items: center;
-  margin-bottom: 2.2rem;
+  margin: 0 auto 2.2rem;
 }
 
 .hero-photo-wrap img {
@@ -153,7 +154,7 @@ a { color: inherit; text-decoration: none; }
 
 .hero-photo-placeholder {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 400;
   color: var(--brown);
   user-select: none;
@@ -163,17 +164,19 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: -0.02em;
-  font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
   line-height: 1.1;
   margin: 0 0 0.55rem;
   color: var(--brown);
+  text-align: center;
 }
 
 .role {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--brown);
   opacity: 0.6;
   margin: 0 0 1.4rem;
+  text-align: center;
 }
 
 .bio {
@@ -182,7 +185,8 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.72;
   color: var(--brown);
   opacity: 0.82;
-  margin: 0 0 2rem;
+  margin: 0 auto 2rem;
+  text-align: center;
 }
 
 /* ============================================================
@@ -191,15 +195,16 @@ a { color: inherit; text-decoration: none; }
 
 .socials {
   display: flex;
-  gap: 0.65rem;
+  gap: 0.85rem;
   align-items: center;
+  justify-content: center;
 }
 
 .social-link {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 36px;
+  height: 36px;
   color: var(--brown);
   opacity: 0.45;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -211,10 +216,26 @@ a { color: inherit; text-decoration: none; }
 }
 
 .social-link svg {
-  height: 17px;
+  height: 22px;
   width: auto;
-  max-width: 28px;
+  max-width: 36px;
 }
+
+.hero-email {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: 0.875rem;
+  color: var(--brown);
+  opacity: 0.6;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--orange);
+  text-decoration-thickness: 1px;
+  transition: opacity 0.2s;
+}
+
+.hero-email:hover { opacity: 1; }
 
 /* ============================================================
    SECTION TITLES
@@ -224,7 +245,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: -0.02em;
-  font-size: clamp(1.55rem, 3.5vw, 2rem);
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
   line-height: 1.1;
   margin: 0 0 0.45rem;
   color: var(--brown);

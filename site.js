@@ -30,7 +30,7 @@ function renderSocials(targetSel) {
 }
 
 const NAV = [
-  { label: "home",                    href: "#home",                  key: "home",                 hidden: true },
+  { label: "Home",                    href: "#home",                  key: "home" },
   { label: "Experience",              href: "#experience",            key: "experience" },
   { label: "Projects",                href: "#projects",              key: "projects" },
   { label: "Blogs & Publications",    href: "#blogs-publications",    key: "blogs-publications" },
