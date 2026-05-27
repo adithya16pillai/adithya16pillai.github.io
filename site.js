@@ -34,6 +34,8 @@ const NAV = [
   { label: "Experience",              href: "#experience",            key: "experience" },
   { label: "Projects",                href: "#projects",              key: "projects" },
   { label: "Blogs & Publications",    href: "#blogs-publications",    key: "blogs-publications" },
+  { label: "Education",               href: "#education",             key: "education" },
+  { label: "More",                    href: "#more",                  key: "more" },
   { label: "CV",                      href: "cv.pdf",                 key: "cv",                   external: true },
 ];
 
