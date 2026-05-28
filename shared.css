@@ -17,6 +17,27 @@
   --font-body:    "Manrope", "Helvetica Neue", sans-serif;
 }
 
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+[data-theme="dark"] {
+  --bg:        #13100c;
+  --cream:     #1f1710;
+  --tan:       #2d2015;
+  --orange:    #DFA061;
+  --brown:     #e9c99a;
+  --green:     #84B067;
+  --brown-50:  rgba(233, 201, 154, 0.5);
+  --brown-15:  rgba(233, 201, 154, 0.15);
+  --brown-08:  rgba(233, 201, 154, 0.08);
+}
+
+[data-theme="dark"] body::before {
+  opacity: 0.06;
+  mix-blend-mode: screen;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -58,12 +79,39 @@ a { color: inherit; text-decoration: none; }
 }
 
 .header-inner {
+  position: relative;
   max-width: 720px;
   margin: 0 auto;
   padding: 1.1rem 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.theme-toggle {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brown);
+  opacity: 0.45;
+  transition: opacity 0.2s;
+  border-radius: 4px;
+  line-height: 0;
+}
+
+.theme-toggle:hover { opacity: 1; }
+
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
 }
 
 .brand {
@@ -187,6 +235,18 @@ a { color: inherit; text-decoration: none; }
   opacity: 0.82;
   margin: 0 auto 2rem;
   text-align: center;
+}
+
+.research-bio {
+  max-width: 50ch;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--brown);
+  opacity: 0.6;
+  margin: 1.8rem auto 0;
+  text-align: center;
+  border-top: 1px solid var(--brown-15);
+  padding-top: 1.6rem;
 }
 
 /* ============================================================
@@ -386,8 +446,13 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 600px) {
   .header-inner {
     padding: 0.85rem 1.25rem;
+    padding-right: 3rem;
     gap: 0.75rem;
     flex-wrap: wrap;
+  }
+
+  .theme-toggle {
+    right: 1.25rem;
   }
 
   .nav-list {
